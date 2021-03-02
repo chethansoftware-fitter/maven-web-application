@@ -1,0 +1,31 @@
+node
+{
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+    def mavenHome = tool name: "maven3.6.3"
+    stage('CheckoutgitCode')
+    {
+        git branch: 'development', credentialsId: '85f65195-0273-4831-9fa6-2bd8ab4355de', 
+        url: 'https://github.com/chethansoftware-fitter/maven-web-application.git'
+    }
+    stage('BuildCode')
+    {
+        sh "$mavenHome/bin/mvn clean package"
+    }
+    /*stage('SonarQube')
+    {
+        sh "$mavenHome/bin/mvn sonar:sonar"
+    }
+    stage('UploadAftifactToNexus')
+    {
+        sh "$mavenHome/bin/mvn deploy"
+    }*/
+    stage('UploadToTomcat')
+    {
+    sshagent(['595ecb19-9e0b-4f31-a669-05a5aad2a44b']) 
+    {
+        
+        sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@15.206.146.235:/opt/apache-tomcat-9.0.41/webapps/"
+    }
+    }
+    
+}
