@@ -18,7 +18,7 @@ node
     stage('UploadAftifactToNexus')
     {
         sh "$mavenHome/bin/mvn deploy"
-    }*/
+    }
     stage('UploadToTomcat')
     {
     sshagent(['595ecb19-9e0b-4f31-a669-05a5aad2a44b']) 
@@ -26,6 +26,6 @@ node
         
         sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@15.206.146.235:/opt/apache-tomcat-9.0.41/webapps/"
     }
-    }
+    }*/
     
 }
